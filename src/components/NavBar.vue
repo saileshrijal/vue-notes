@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar bg-dark navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Vue Notes</a>
+            <a class="navbar-brand" href="/">Vue Notes</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -14,6 +14,12 @@
                     </li>
                     <li class="nav-item">
                         <RouterLink to="/about" class="nav-link" href="#">About</RouterLink>
+                    </li>
+                    <li class="nav-item">
+                        <RouterLink to="/category" class="nav-link" href="#">Category</RouterLink>
+                    </li>
+                    <li class="nav-item">
+                        <RouterLink to="/note" class="nav-link" href="#">Note</RouterLink>
                     </li>
                 </ul>
             </div>
