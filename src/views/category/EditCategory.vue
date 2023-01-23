@@ -42,7 +42,6 @@ const category = ref({
 
 const id = router.currentRoute.value.params.id;
 
-
 const getCategory = async () => {
     try {
         const response = await axios.get(`https://localhost:44385/api/Category/Get?id=${id}`);
