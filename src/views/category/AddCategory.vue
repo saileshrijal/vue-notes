@@ -21,7 +21,7 @@
                             <textarea class="form-control" id="description" rows="3"
                                 v-model="category.description"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Submit</button>
+                        <button type="submit" class="btn btn-primary w-100">Save</button>
                     </form>
                 </div>
             </div>
@@ -40,8 +40,25 @@ const category = ref({
 });
 
 const addCategory = async () => {
-    const response = await axios.post("https://localhost:44385/api/Category/Post", category.value);
-    console.log(response);
+    try {
+        const response = await axios.post("https://localhost:44385/api/Category/Post", category.value);
+        if (response.status == 200) {
+            alert("Category Added Successfully");
+        } else {
+            alert("Something went wrong");
+        }
+    }
+    catch (error) {
+        alert(error);
+    }
+}
+
+const checkValidation = () => {
+    if (category.value.title == '' || category.value.description == '') {
+        alert("Please fill all the fields");
+        return false;
+    }
+    return true;
 }
 
 const goBack = () => {
@@ -49,6 +66,9 @@ const goBack = () => {
 }
 
 const onSubmit = async () => {
+    if (!checkValidation()) {
+        return;
+    }
     await addCategory();
     router.push("/category");
 }

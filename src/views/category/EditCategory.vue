@@ -44,8 +44,15 @@ const id = router.currentRoute.value.params.id;
 
 
 const getCategory = async () => {
-    const response = await axios.get(`https://localhost:44385/api/Category/Get?id=${id}`);
-    category.value = response.data;
+    try {
+        const response = await axios.get(`https://localhost:44385/api/Category/Get?id=${id}`);
+        if (response.status == 200)
+            category.value = response.data;
+
+    }
+    catch (error) {
+        console.log(error);
+    }
 }
 
 onMounted(async () => {
