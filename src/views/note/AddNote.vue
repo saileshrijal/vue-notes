@@ -2,7 +2,7 @@
   <div class="container mt-4">
     <div class="row">
       <div class="col-6">
-        <h2 class="text-uppercase">Add Category</h2>
+        <h2 class="text-uppercase">Add Note</h2>
       </div>
       <div class="col-6 text-end">
         <button class="btn btn-dark" @click="goBack">Go Back</button>
@@ -18,7 +18,7 @@
                 class="form-control"
                 id="title"
                 placeholder="Enter Title"
-                v-model="category.title"
+                v-model="note.title"
               />
             </div>
             <div class="mb-2">
@@ -27,8 +27,18 @@
                 class="form-control"
                 id="description"
                 rows="3"
-                v-model="category.description"
+                v-model="note.description"
               ></textarea>
+            </div>
+            <div class="mb-2">
+              <label for="title" class="form-label">Category id</label>
+              <input
+                type="text"
+                class="form-control"
+                id="title"
+                placeholder="Enter category id"
+                v-model="note.categoryId"
+              />
             </div>
             <button type="submit" class="btn btn-primary w-100">Submit</button>
           </form>
@@ -43,25 +53,28 @@ import { ref } from "vue";
 import axios from "axios";
 import router from "@/router";
 
-const category = ref({
+const note = ref({
   title: "",
   description: "",
+  categoryId: "",
 });
 
-const addCategory = async () => {
+const addNote = async () => {
   const response = await axios.post(
-    "https://localhost:44385/api/Category/Post",
-    category.value
+    "https://localhost:44385/api/Note/Post",
+    note.value
   );
   console.log(response);
 };
 
+/* eslint-disable */
 const goBack = () => {
-  router.push({ path: "/category" });
+  router.push({ path: "/note" });
 };
 
+/* eslint-disable */
 const onSubmit = async () => {
-  await addCategory();
-  router.push("/category");
+  await addNote();
+  router.push("/note");
 };
 </script>
