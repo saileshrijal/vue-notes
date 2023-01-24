@@ -37,9 +37,30 @@ const category = ref({
   description: "",
 });
 
+const validation = () => {
+  if (category.value.title === "") {
+    alert("Title is required");
+    return false;
+  }
+  if (category.value.description === "") {
+    alert("Description is required");
+    return false;
+  }
+  return true;
+}
+
 const addCategory = async () => {
-  const response = await axios.post("https://localhost:44385/api/Category/Post", category.value);
-  console.log(response);
+  try {
+    const response = await axios.post("https://localhost:44385/api/Category/Post", category.value);
+    if (response.status === 200) {
+      alert("Category Added");
+    } else {
+      alert("Something went wrong");
+    }
+  }
+  catch (err) {
+    alert(err.message);
+  }
 }
 
 const goBack = () => {
@@ -47,6 +68,9 @@ const goBack = () => {
 };
 
 const onSubmit = async () => {
+  if (!validation()) {
+    return;
+  }
   await addCategory();
   router.push("/category");
 }

@@ -45,12 +45,14 @@ const id = router.currentRoute.value.params.id;
 const getCategory = async () => {
     try {
         const response = await axios.get(`https://localhost:44385/api/Category/Get?id=${id}`);
-        if (response.status == 200)
+        if (response.status == 200) {
             category.value = response.data;
-
+        } else {
+            alert("Something went wrong");
+        }
     }
     catch (error) {
-        console.log(error);
+        alert(error);
     }
 }
 
@@ -58,9 +60,29 @@ onMounted(async () => {
     await getCategory();
 });
 
+const validation = () => {
+    if (category.value.title === "") {
+        alert("Title is required");
+        return false;
+    }
+    if (category.value.description === "") {
+        alert("Description is required");
+        return false;
+    }
+    return true;
+}
+
 const editCategory = async () => {
-    const response = await axios.put(`https://localhost:44385/api/Category/Put?id=${category.value.id}`, category.value);
-    console.log(response);
+    try {
+        const response = await axios.put(`https://localhost:44385/api/Category/Put?id=${category.value.id}`, category.value);
+        if (response.status == 200) {
+            alert("Category Updated");
+        } else {
+            alert("Something went wrong");
+        }
+    } catch (err) {
+        alert(err.message);
+    }
 }
 
 const goBack = () => {
@@ -68,6 +90,9 @@ const goBack = () => {
 }
 
 const onSubmit = async () => {
+    if (!validation()) {
+        return;
+    }
     await editCategory();
     router.push("/category");
 }

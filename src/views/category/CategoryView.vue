@@ -27,17 +27,11 @@
                 <td>{{ category.description }}</td>
                 <td>{{ category.createdOn }}</td>
                 <td>
-                  <button
-                    class="btn btn-sm btn-primary"
-                    @click="onEdit(category.id)"
-                  >
+                  <button class="btn btn-sm btn-primary" @click="onEdit(category.id)">
                     Edit
                   </button>
                   |
-                  <button
-                    class="btn btn-sm btn-danger"
-                    @click="onDelete(category.id)"
-                  >
+                  <button class="btn btn-sm btn-danger" @click="onDelete(category.id)">
                     Delete
                   </button>
                 </td>
@@ -57,11 +51,19 @@ import router from "@/router";
 const categories = ref([]);
 
 const getCategories = async () => {
-  const response = await axios.get(
-    "https://localhost:44385/api/Category/GetAll"
-  );
-  console.log(response);
-  categories.value = response.data;
+  try {
+    const response = await axios.get(
+      "https://localhost:44385/api/Category/GetAll"
+    );
+    if (response.status === 200) {
+      categories.value = response.data;
+    } else {
+      alert("Something went wrong");
+    }
+  }
+  catch (err) {
+    alert(err.message);
+  }
 };
 
 const addClicked = () => {
@@ -69,11 +71,18 @@ const addClicked = () => {
 };
 
 const onDelete = async (id) => {
-  const response = await axios.delete(
-    `https://localhost:44385/api/Category/Delete?id=${id}`
-  );
-  if (response.status === 200) {
-    await getCategories();
+  try {
+    const response = await axios.delete(
+      `https://localhost:44385/api/Category/Delete?id=${id}`
+    );
+    if (response.status === 200) {
+      alert("Category Deleted");
+      await getCategories();
+    } else {
+      alert("Something went wrong");
+    }
+  } catch (err) {
+    alert(err.message);
   }
 };
 
