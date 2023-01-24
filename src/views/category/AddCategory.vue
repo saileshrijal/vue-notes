@@ -31,6 +31,7 @@
 import { ref } from "vue";
 import axios from "axios";
 import router from "@/router";
+import swal from "sweetalert2"
 
 const category = ref({
   title: "",
@@ -39,11 +40,20 @@ const category = ref({
 
 const validation = () => {
   if (category.value.title === "") {
-    alert("Title is required");
+
+    swal.fire({
+      title: 'Title is required',
+      icon: 'error',
+      confirmButtonText: 'Ok'
+    })
     return false;
   }
   if (category.value.description === "") {
-    alert("Description is required");
+    swal.fire({
+      title: 'Description is required',
+      icon: 'error',
+      confirmButtonText: 'Ok'
+    })
     return false;
   }
   return true;
@@ -53,13 +63,27 @@ const addCategory = async () => {
   try {
     const response = await axios.post("https://localhost:44385/api/Category/Post", category.value);
     if (response.status === 200) {
-      alert("Category Added");
+      swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Your work has been saved',
+        showConfirmButton: false,
+        timer: 1500
+      })
     } else {
-      alert("Something went wrong");
+      swal.fire({
+        title: 'Something went wrong',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      })
     }
   }
   catch (err) {
-    alert(err.message);
+    swal.fire({
+      title: err.message,
+      icon: 'error',
+      confirmButtonText: 'Ok'
+    })
   }
 }
 
