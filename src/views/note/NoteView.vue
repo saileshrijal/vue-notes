@@ -29,11 +29,17 @@
                 <td>{{ note.category.title }}</td>
                 <td>{{ note.createdOn }}</td>
                 <td>
-                  <button class="btn btn-sm btn-primary" @click="onEdit(note.id)">
+                  <button
+                    class="btn btn-sm btn-primary"
+                    @click="onEdit(note.id)"
+                  >
                     Edit
                   </button>
                   |
-                  <button class="btn btn-sm btn-danger" @click="onDelete(note.id)">
+                  <button
+                    class="btn btn-sm btn-danger"
+                    @click="onDelete(note.id)"
+                  >
                     Delete
                   </button>
                 </td>
@@ -53,9 +59,17 @@ import router from "@/router";
 const notes = ref([]);
 
 const getNotes = async () => {
-  const response = await axios.get("https://localhost:44385/api/Note/GetAll");
-  console.log(response);
-  notes.value = response.data;
+  try {
+    const response = await axios.get("https://localhost:44385/api/Note/GetAll");
+    if (response.status === 200) {
+      notes.value = response.data;
+      console.log(response.data);
+    } else {
+      alert("Something went wrong");
+    }
+  } catch (err) {
+    alert(err.messsage);
+  }
 };
 
 const addClicked = () => {
@@ -63,11 +77,17 @@ const addClicked = () => {
 };
 
 const onDelete = async (id) => {
-  const response = await axios.delete(
-    `https://localhost:44385/api/Note/Delete?id=${id}`
-  );
-  if (response.status === 200) {
-    await getNotes();
+  try {
+    const response = await axios.delete(
+      `https://localhost:44385/api/Note/Delete?id=${id}`
+    );
+    if (response.status === 200) {
+      await getNotes();
+    } else {
+      alert("something went wrong");
+    }
+  } catch (err) {
+    alert(err.messsage);
   }
 };
 
