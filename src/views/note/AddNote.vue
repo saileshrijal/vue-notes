@@ -13,32 +13,19 @@
           <form @submit.prevent="onSubmit">
             <div class="mb-2">
               <label for="title" class="form-label">Title</label>
-              <input
-                type="text"
-                class="form-control"
-                id="title"
-                placeholder="Enter Title"
-                v-model="note.title"
-              />
+              <input type="text" class="form-control" id="title" placeholder="Enter Title" v-model="note.title" />
             </div>
             <div class="mb-2">
               <label for="description" class="form-label">Description</label>
-              <textarea
-                class="form-control"
-                id="description"
-                rows="3"
-                v-model="note.description"
-              ></textarea>
+              <textarea class="form-control" id="description" rows="3" v-model="note.description"></textarea>
             </div>
             <div class="mb-2">
               <label for="title" class="form-label">Category id</label>
-              <input
-                type="text"
-                class="form-control"
-                id="title"
-                placeholder="Enter category id"
-                v-model="note.categoryId"
-              />
+              <select v-model="note.categoryId" class="form-select">
+                <option value="" disabled>--Select Category--</option>
+                <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.title }}
+                </option>
+              </select>
             </div>
             <button type="submit" class="btn btn-primary w-100">Submit</button>
           </form>
@@ -49,7 +36,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import router from "@/router";
 
@@ -58,6 +45,19 @@ const note = ref({
   description: "",
   categoryId: "",
 });
+
+const categories = ref([]);
+
+onMounted(async () => {
+  await getCategories();
+});
+
+const getCategories = async () => {
+  const response = await axios.get(
+    "https://localhost:44385/api/Category/GetAll"
+  );
+  categories.value = response.data;
+};
 
 const addNote = async () => {
   const response = await axios.post(
@@ -77,4 +77,5 @@ const onSubmit = async () => {
   await addNote();
   router.push("/note");
 };
+
 </script>

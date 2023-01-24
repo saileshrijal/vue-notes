@@ -16,7 +16,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Description</th>
-                <th scope="col">Category Id</th>
+                <th scope="col">Category</th>
                 <th scope="col">Created On</th>
                 <th scope="col">Action</th>
               </tr>
@@ -26,20 +26,14 @@
                 <th scope="row">{{ index + 1 }}</th>
                 <td>{{ note.title }}</td>
                 <td>{{ note.description }}</td>
-                <td>{{ note.categoryId }}</td>
+                <td>{{ note.category.title }}</td>
                 <td>{{ note.createdOn }}</td>
                 <td>
-                  <button
-                    class="btn btn-sm btn-primary"
-                    @click="onEdit(note.id)"
-                  >
+                  <button class="btn btn-sm btn-primary" @click="onEdit(note.id)">
                     Edit
                   </button>
                   |
-                  <button
-                    class="btn btn-sm btn-danger"
-                    @click="onDelete(note.id)"
-                  >
+                  <button class="btn btn-sm btn-danger" @click="onDelete(note.id)">
                     Delete
                   </button>
                 </td>
