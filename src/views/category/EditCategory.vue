@@ -108,7 +108,7 @@ const editCategory = async () => {
       );
       if (response.status == 200) {
         swal.fire({
-          position: "top-end",
+          position: "bottom-end",
           icon: "success",
           title: "Your category has been updated",
           showConfirmButton: false,

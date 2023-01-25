@@ -1,124 +1,123 @@
 <template>
   <div class="container mt-4">
-    <div class="row">
-      <div class="col-6">
-        <h2 class="text-uppercase">List Of Categories</h2>
-      </div>
-      <div class="col-6 text-end">
-        <button class="btn btn-dark" @click="addClicked">Add Category</button>
-      </div>
-      <hr />
-      <div class="card">
-        <div class="card-body">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Description</th>
-                <th scope="col">Created On</th>
-                <th scope="col">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(category, index) in categories" :key="category.id">
-                <th scope="row">{{ index + 1 }}</th>
-                <td>{{ category.title }}</td>
-                <td>{{ category.description }}</td>
-                <td>{{ category.createdOn }}</td>
-                <td>
-                  <button
-                    class="btn btn-sm btn-primary"
-                    @click="onEdit(category.id)"
-                  >
-                    Edit
-                  </button>
-                  |
-                  <button
-                    class="btn btn-sm btn-danger"
-                    @click="onDelete(category.id)"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+    <h2 class="text-uppercase mb-4">List Of Categories</h2>
+    <button class="btn btn-dark mb-4" @click="addClicked">Add Category</button>
+    <div class="d-flex justify-content-center" v-if="data.length">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Category title</th>
+            <th>Description</th>
+            <th>Created On</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in currentPageData" :key="item.id">
+            <td>{{ item.title }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.createdOn }}</td>
+            <td>
+              <button class="btn btn-danger" @click="deleteItem(item.id)">
+                Delete
+              </button>
+              <button class="btn btn-primary mx-2" @click="editItem(item.id)">
+                Edit
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="d-flex justify-content-center" v-else>No data available</div>
+    <div class="d-flex justify-content-center mt-3">
+      <button class="btn btn-secondary mr-2" @click="prevPage">Previous</button>
+      <span class="mx-2">
+        Showing page {{ currentPage }} of {{ totalPages }}
+      </span>
+      <button class="btn btn-secondary ml-2" @click="nextPage">Next</button>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from "vue";
+<script>
+/* eslint-disable */
 import axios from "axios";
 import router from "@/router";
 import swal from "sweetalert2";
-const categories = ref([]);
-
-const getCategories = async () => {
-  try {
-    const response = await axios.get(
-      "https://localhost:44385/api/Category/GetAll"
-    );
-    if (response.status === 200) {
-      categories.value = response.data;
-    } else {
-      swal.fire({
-        title: "something went wrong",
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    }
-  } catch (err) {
-    swal.fire({
-      title: err.message,
-      icon: "error",
-      confirmButtonText: "Ok",
-    });
-  }
+export default {
+  data() {
+    return {
+      currentPage: 1,
+      itemsPerPage: 5,
+      data: [],
+    };
+  },
+  mounted() {
+    this.fetchData();
+  },
+  computed: {
+    currentPageData() {
+      let start = (this.currentPage - 1) * this.itemsPerPage;
+      let end = start + this.itemsPerPage;
+      return this.data.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.data.length / this.itemsPerPage);
+    },
+  },
+  methods: {
+    fetchData() {
+      axios
+        .get("https://localhost:44385/api/Category/GetAll")
+        .then((response) => {
+          this.data = response.data;
+        })
+        .catch((error) => {
+          swal.fire({
+            title: error.message,
+            icon: "error",
+            confirmButtonText: "Ok",
+          });
+        });
+    },
+    deleteItem(id) {
+      axios
+        .delete(`https://localhost:44385/api/Category/Delete?id=${id}`)
+        .then((response) => {
+          this.fetchData();
+          swal.fire({
+            position: "bottom-end",
+            icon: "success",
+            title: "Your category has been deleted",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        })
+        .catch((error) => {
+          swal.fire({
+            title: error.message,
+            icon: "error",
+            confirmButtonText: "Ok",
+          });
+        });
+    },
+    editItem(id) {
+      router.push({ path: `category/edit/${id}` });
+    },
+    addClicked() {
+      router.push({ path: "category/add" });
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+  },
 };
-
-const addClicked = () => {
-  router.push({ path: "category/add" });
-};
-
-const onDelete = async (id) => {
-  try {
-    const response = await axios.delete(
-      `https://localhost:44385/api/Category/Delete?id=${id}`
-    );
-    if (response.status === 200) {
-      swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Your category has been deleted",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      await getCategories();
-    } else {
-      swal.fire({
-        title: "something went wrong",
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    }
-  } catch (err) {
-    swal.fire({
-      title: err.message,
-      icon: "error",
-      confirmButtonText: "Ok",
-    });
-  }
-};
-
-const onEdit = (id) => {
-  router.push({ path: `category/edit/${id}` });
-};
-
-onMounted(async () => {
-  await getCategories();
-});
 </script>
