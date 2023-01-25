@@ -7,17 +7,28 @@
       <div class="col-6 text-end">
         <button class="btn btn-dark" @click="goBack">Go Back</button>
       </div>
-      <hr>
+      <hr />
       <div class="card">
         <div class="card-body">
           <form @submit.prevent="onSubmit">
             <div class="mb-2">
               <label for="title" class="form-label">Title</label>
-              <input type="text" class="form-control" id="title" placeholder="Enter Title" v-model="category.title">
+              <input
+                type="text"
+                class="form-control"
+                id="title"
+                placeholder="Enter Title"
+                v-model="category.title"
+              />
             </div>
             <div class="mb-2">
               <label for="description" class="form-label">Description</label>
-              <textarea class="form-control" id="description" rows="3" v-model="category.description"></textarea>
+              <textarea
+                class="form-control"
+                id="description"
+                rows="3"
+                v-model="category.description"
+              ></textarea>
             </div>
             <button type="submit" class="btn btn-primary w-100">Submit</button>
           </form>
@@ -31,7 +42,7 @@
 import { ref } from "vue";
 import axios from "axios";
 import router from "@/router";
-import swal from "sweetalert2"
+import swal from "sweetalert2";
 
 const category = ref({
   title: "",
@@ -40,52 +51,53 @@ const category = ref({
 
 const validation = () => {
   if (category.value.title === "") {
-
     swal.fire({
-      title: 'Title is required',
-      icon: 'error',
-      confirmButtonText: 'Ok'
-    })
+      title: "Title is required",
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
     return false;
   }
   if (category.value.description === "") {
     swal.fire({
-      title: 'Description is required',
-      icon: 'error',
-      confirmButtonText: 'Ok'
-    })
+      title: "Description is required",
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
     return false;
   }
   return true;
-}
+};
 
 const addCategory = async () => {
   try {
-    const response = await axios.post("https://localhost:44385/api/Category/Post", category.value);
+    const response = await axios.post(
+      "https://localhost:44385/api/Category/Post",
+      category.value
+    );
     if (response.status === 200) {
       swal.fire({
-        position: 'top-end',
-        icon: 'success',
-        title: 'Your work has been saved',
+        position: "top-end",
+        icon: "success",
+        title: "Your category has been saved",
         showConfirmButton: false,
-        timer: 1500
-      })
+        timer: 1500,
+      });
     } else {
       swal.fire({
-        title: 'Something went wrong',
-        icon: 'error',
-        confirmButtonText: 'Ok'
-      })
+        title: "Something went wrong",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
     }
-  }
-  catch (err) {
+  } catch (err) {
     swal.fire({
       title: err.message,
-      icon: 'error',
-      confirmButtonText: 'Ok'
-    })
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
   }
-}
+};
 
 const goBack = () => {
   router.push({ path: "/category" });
@@ -97,6 +109,5 @@ const onSubmit = async () => {
   }
   await addCategory();
   router.push("/category");
-}
-
+};
 </script>

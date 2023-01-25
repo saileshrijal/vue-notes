@@ -56,6 +56,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import router from "@/router";
+import swal from "sweetalert2";
 const notes = ref([]);
 
 const getNotes = async () => {
@@ -63,12 +64,20 @@ const getNotes = async () => {
     const response = await axios.get("https://localhost:44385/api/Note/GetAll");
     if (response.status === 200) {
       notes.value = response.data;
-      console.log(response.data);
+      // console.log(response.data);
     } else {
-      alert("Something went wrong");
+      swal.fire({
+        title: "Something went wrong",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
     }
   } catch (err) {
-    alert(err.messsage);
+    swal.fire({
+      title: err.messsage,
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
   }
 };
 
@@ -82,12 +91,27 @@ const onDelete = async (id) => {
       `https://localhost:44385/api/Note/Delete?id=${id}`
     );
     if (response.status === 200) {
+      swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Your note has been deleted",
+        showConfirmButton: false,
+        timer: 1500,
+      });
       await getNotes();
     } else {
-      alert("something went wrong");
+      swal.fire({
+        title: "something went wrong",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
     }
   } catch (err) {
-    alert(err.messsage);
+    swal.fire({
+      title: err.messsage,
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
   }
 };
 

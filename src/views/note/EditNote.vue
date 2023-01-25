@@ -2,7 +2,7 @@
   <div class="container mt-4">
     <div class="row">
       <div class="col-6">
-        <h2 class="text-uppercase">Add Note</h2>
+        <h2 class="text-uppercase">Edit Note</h2>
       </div>
       <div class="col-6 text-end">
         <button class="btn btn-dark" @click="goBack">Go Back</button>
@@ -55,7 +55,7 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import router from "@/router";
-
+import swal from "sweetalert2";
 const note = ref({
   id: "",
   title: "",
@@ -67,6 +67,36 @@ const categories = ref([]);
 
 const id = router.currentRoute.value.params.id;
 
+const validation = () => {
+  if (note.value.title === "") {
+    swal.fire({
+      title: "Note title is required",
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
+    return false;
+  }
+
+  if (note.value.description === "") {
+    swal.fire({
+      title: "Note description is required",
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
+    return false;
+  }
+
+  if (note.value.categoryId === "") {
+    swal.fire({
+      title: "Note category must be selected",
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
+    return false;
+  }
+  return true;
+};
+
 const getNote = async () => {
   try {
     const response = await axios.get(
@@ -76,10 +106,18 @@ const getNote = async () => {
       note.value = response.data;
       // console.log(response);
     } else {
-      alert("something went wrong");
+      swal.fire({
+        title: "Something went wrong",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
     }
   } catch (err) {
-    alert(err.message);
+    swal.fire({
+      title: err.message,
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
   }
 };
 
@@ -91,10 +129,18 @@ const getCategories = async () => {
     if (response.status === 200) {
       categories.value = response.data;
     } else {
-      alert("something went wrong");
+      swal.fire({
+        title: "Something went wrong",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
     }
   } catch (err) {
-    alert(err.message);
+    swal.fire({
+      title: err.message,
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
   }
 };
 
@@ -106,12 +152,27 @@ onMounted(async () => {
 const editNote = async () => {
   try {
     /* eslint-disable */
-    const response = await axios.put(
-      `https://localhost:44385/api/Note/Put?id=${note.value.id}`,
-      note.value
-    );
+    if (validation()) {
+      const response = await axios.put(
+        `https://localhost:44385/api/Note/Put?id=${note.value.id}`,
+        note.value
+      );
+      if (response.status === 200) {
+        swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Your note has been updated",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    }
   } catch (err) {
-    alert(err.message);
+    swal.fire({
+      title: err.message,
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
   }
 };
 
@@ -120,6 +181,9 @@ const goBack = () => {
 };
 
 const onSubmit = async () => {
+  if (!validation()) {
+    return;
+  }
   await editNote();
   router.push("/note");
 };

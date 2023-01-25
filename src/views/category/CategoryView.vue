@@ -27,11 +27,17 @@
                 <td>{{ category.description }}</td>
                 <td>{{ category.createdOn }}</td>
                 <td>
-                  <button class="btn btn-sm btn-primary" @click="onEdit(category.id)">
+                  <button
+                    class="btn btn-sm btn-primary"
+                    @click="onEdit(category.id)"
+                  >
                     Edit
                   </button>
                   |
-                  <button class="btn btn-sm btn-danger" @click="onDelete(category.id)">
+                  <button
+                    class="btn btn-sm btn-danger"
+                    @click="onDelete(category.id)"
+                  >
                     Delete
                   </button>
                 </td>
@@ -48,6 +54,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import router from "@/router";
+import swal from "sweetalert2";
 const categories = ref([]);
 
 const getCategories = async () => {
@@ -58,11 +65,18 @@ const getCategories = async () => {
     if (response.status === 200) {
       categories.value = response.data;
     } else {
-      alert("Something went wrong");
+      swal.fire({
+        title: "something went wrong",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
     }
-  }
-  catch (err) {
-    alert(err.message);
+  } catch (err) {
+    swal.fire({
+      title: err.message,
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
   }
 };
 
@@ -76,13 +90,27 @@ const onDelete = async (id) => {
       `https://localhost:44385/api/Category/Delete?id=${id}`
     );
     if (response.status === 200) {
-      alert("Category Deleted");
+      swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Your category has been deleted",
+        showConfirmButton: false,
+        timer: 1500,
+      });
       await getCategories();
     } else {
-      alert("Something went wrong");
+      swal.fire({
+        title: "something went wrong",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
     }
   } catch (err) {
-    alert(err.message);
+    swal.fire({
+      title: err.message,
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
   }
 };
 

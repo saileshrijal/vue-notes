@@ -55,6 +55,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import router from "@/router";
+import swal from "sweetalert2";
 
 const note = ref({
   title: "",
@@ -62,6 +63,35 @@ const note = ref({
   categoryId: "",
 });
 
+const validation = () => {
+  if (note.value.title === "") {
+    swal.fire({
+      title: "Note title is required",
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
+    return false;
+  }
+
+  if (note.value.description === "") {
+    swal.fire({
+      title: "Note description is required",
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
+    return false;
+  }
+
+  if (note.value.categoryId === "") {
+    swal.fire({
+      title: "Note category must be selected",
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
+    return false;
+  }
+  return true;
+};
 const categories = ref([]);
 
 onMounted(async () => {
@@ -85,19 +115,35 @@ const getCategories = async () => {
 
 const addNote = async () => {
   try {
-    const response = await axios.post(
-      "https://localhost:44385/api/Note/Post",
-      note.value
-    );
-
-    if (response.status === 200) {
-      note.value = response.data;
-      // console.log(response);
+    if (validation()) {
+      const response = await axios.post(
+        "https://localhost:44385/api/Note/Post",
+        note.value
+      );
+      if (response.status === 200) {
+        note.value = response.data;
+        swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Your note has been saved",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        // console.log(response);
+      }
     } else {
-      alert("something went wrong");
+      swal.fire({
+        title: "Something went wrong",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
     }
   } catch (err) {
-    alert(err.message);
+    swal.fire({
+      title: err.message,
+      icon: "error",
+      confirmButtonText: "Ok",
+    });
   }
 };
 
@@ -108,6 +154,9 @@ const goBack = () => {
 
 /* eslint-disable */
 const onSubmit = async () => {
+  if (!validation()) {
+    return;
+  }
   await addNote();
   router.push("/note");
 };
