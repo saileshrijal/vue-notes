@@ -1,123 +1,95 @@
 <template>
-  <div class="container mt-4">
-    <h2 class="text-uppercase mb-4">List Of Categories</h2>
-    <button class="btn btn-dark mb-4" @click="addClicked">Add Category</button>
-    <div class="d-flex justify-content-center" v-if="data.length">
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Category title</th>
-            <th>Description</th>
-            <th>Created On</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in currentPageData" :key="item.id">
-            <td>{{ item.title }}</td>
-            <td>{{ item.description }}</td>
-            <td>{{ item.createdOn }}</td>
-            <td>
-              <button class="btn btn-danger" @click="deleteItem(item.id)">
-                Delete
-              </button>
-              <button class="btn btn-primary mx-2" @click="editItem(item.id)">
-                Edit
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="d-flex justify-content-center" v-else>No data available</div>
-    <div class="d-flex justify-content-center mt-3">
-      <button class="btn btn-secondary mr-2" @click="prevPage">Previous</button>
-      <span class="mx-2">
-        Showing page {{ currentPage }} of {{ totalPages }}
-      </span>
-      <button class="btn btn-secondary ml-2" @click="nextPage">Next</button>
-    </div>
+  <div class="d-flex justify-content-center">
+    <table
+      class="table table-bordered table-striped m-5"
+      style="max-width: 800px"
+    >
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Created On</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="category in categories" :key="category.id">
+          <td>{{ category.title }}</td>
+          <td>{{ category.description }}</td>
+          <td>{{ category.createdOn }}</td>
+          <td class="text-center">
+            <button class="btn btn-danger" @click="deleteItem(category.id)">
+              Delete
+            </button>
+            <button class="btn btn-primary mx-2" @click="editItem(category.id)">
+              Edit
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div v-if="loading">Loading...</div>
+    <div v-else-if="error">Error: {{ error }}</div>
+  </div>
+  <div class="d-flex justify-content-center">
+    <v-pagination
+      v-model="page"
+      :pages="pageSize"
+      :range-size="1"
+      active-color="#DCEDFF"
+      @update:modelValue="getCategories()"
+      class="my-3"
+    />
   </div>
 </template>
 
-<script>
-/* eslint-disable */
-import axios from "axios";
+<script setup>
+import useFetch from "./composables/useFetch";
+import { onMounted, ref, watch } from "vue";
 import router from "@/router";
-import swal from "sweetalert2";
-export default {
-  data() {
-    return {
-      currentPage: 1,
-      itemsPerPage: 5,
-      data: [],
-    };
-  },
-  mounted() {
-    this.fetchData();
-  },
-  computed: {
-    currentPageData() {
-      let start = (this.currentPage - 1) * this.itemsPerPage;
-      let end = start + this.itemsPerPage;
-      return this.data.slice(start, end);
-    },
-    totalPages() {
-      return Math.ceil(this.data.length / this.itemsPerPage);
-    },
-  },
-  methods: {
-    fetchData() {
-      axios
-        .get("https://localhost:44385/api/Category/GetAll")
-        .then((response) => {
-          this.data = response.data;
-        })
-        .catch((error) => {
-          swal.fire({
-            title: error.message,
-            icon: "error",
-            confirmButtonText: "Ok",
-          });
-        });
-    },
-    deleteItem(id) {
-      axios
-        .delete(`https://localhost:44385/api/Category/Delete?id=${id}`)
-        .then((response) => {
-          this.fetchData();
-          swal.fire({
-            position: "bottom-end",
-            icon: "success",
-            title: "Your category has been deleted",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        })
-        .catch((error) => {
-          swal.fire({
-            title: error.message,
-            icon: "error",
-            confirmButtonText: "Ok",
-          });
-        });
-    },
-    editItem(id) {
-      router.push({ path: `category/edit/${id}` });
-    },
-    addClicked() {
-      router.push({ path: "category/add" });
-    },
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
+import VPagination from "@hennge/vue3-pagination";
+import "@hennge/vue3-pagination/dist/vue3-pagination.css";
+import axios from "axios";
+
+const baseUrl = "https://localhost:44385/api/Category/GetAll";
+const page = ref(1);
+const pageSize = ref(10);
+const categories = ref([]);
+
+const getCategories = () => {
+  const { data, error, loading } = useFetch(
+    `${baseUrl}?page=${page.value}&pageSize=${pageSize.value}`
+  );
+  // console.log(data.value.pageSize);
+  watch(
+    () => data.value,
+    (newValue) => {
+      if (newValue) {
+        categories.value = newValue.data;
+        // console.log(categories);
       }
-    },
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-      }
-    },
-  },
+    }
+  );
+  return { error, loading };
+};
+onMounted(() => {
+  getCategories();
+});
+
+const editItem = (id) => {
+  router.push({ path: `category/edit/${id}` });
+};
+
+const deleteItem = (id) => {
+  try {
+    const response = axios.delete(
+      `https://localhost:44385/api/Category/Delete?id=${id}`
+    );
+    if (response === 200) {
+      alert("Category deleted successfully");
+    }
+  } catch (error) {
+    alert(error);
+  }
 };
 </script>
