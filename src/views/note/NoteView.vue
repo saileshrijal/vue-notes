@@ -10,42 +10,31 @@
       <hr />
       <div class="card">
         <div class="card-body">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Description</th>
-                <th scope="col">Category</th>
-                <th scope="col">Created On</th>
-                <th scope="col">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(note, index) in notes" :key="note.id">
-                <th scope="row">{{ index + 1 }}</th>
-                <td>{{ note.title }}</td>
-                <td>{{ note.description }}</td>
-                <td>{{ note.category.title }}</td>
-                <td>{{ note.createdOn }}</td>
-                <td>
-                  <button
-                    class="btn btn-sm btn-primary"
-                    @click="onEdit(note.id)"
-                  >
+          <div class="container-fluid my-1 bg-dark p-2 rounded text-white" v-for="(note) in notes" :key="note.id">
+            <div class="row">
+              <div class="col-8 d-flex flex-column align-items-start justify-content-center">
+                <h4>{{ note.title }}</h4>
+                <p>{{ note.description }}</p>
+              </div>
+              <div class="col-4 d-flex flex-column align-items-end justify-content-center gap-2">
+                <div>
+                  <li style="font-size: 10px;"
+                    class="text-uppercase fw-bold bg-white d-inline-block rounded text-black px-2 py-1">{{
+                      note.category.title
+                    }}</li>
+                </div>
+                <div class="">
+                  <button class="btn btn-sm btn-primary" @click="onEdit(note.id)">
                     Edit
                   </button>
                   |
-                  <button
-                    class="btn btn-sm btn-danger"
-                    @click="onDelete(note.id)"
-                  >
+                  <button class="btn btn-sm btn-danger" @click="onDelete(note.id)">
                     Delete
                   </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

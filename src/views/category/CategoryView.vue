@@ -22,26 +22,17 @@
             </thead>
             <tbody>
               <transition-group name="list">
-                <tr
-                  v-for="(category, index) in categories.data"
-                  :key="category.id"
-                >
+                <tr v-for="(category, index) in categories.data" :key="category.id">
                   <th scope="row">{{ index + 1 }}</th>
                   <td>{{ category.title }}</td>
                   <td>{{ category.description }}</td>
                   <td>{{ category.createdOn }}</td>
                   <td>
-                    <button
-                      class="btn btn-sm btn-primary"
-                      @click="onEdit(category.id)"
-                    >
+                    <button class="btn btn-sm btn-primary" @click="onEdit(category.id)">
                       Edit
                     </button>
                     |
-                    <button
-                      class="btn btn-sm btn-danger"
-                      @click="onDelete(category.id)"
-                    >
+                    <button class="btn btn-sm btn-danger" @click="onDelete(category.id)">
                       Delete
                     </button>
                   </td>
@@ -49,12 +40,8 @@
               </transition-group>
             </tbody>
           </table>
-          <Pagination
-            v-model="categories.page"
-            :records="categories.totalCount"
-            :per-page="categories.pageSize"
-            @paginate="myCallback"
-          />
+          <Pagination v-model="categories.page" :records="categories.totalCount" :per-page="categories.pageSize"
+            @paginate="myCallback" />
         </div>
       </div>
     </div>
@@ -119,17 +106,19 @@ onMounted(async () => {
 });
 </script>
 
-<style>
+<style scoped>
 .list-move,
 .list-enter-active,
 .list-leave-active {
   transition: all 0.5s ease;
 }
+
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
   transform: translateX(-50px);
 }
+
 .list-leave-active {
   position: absolute;
 }

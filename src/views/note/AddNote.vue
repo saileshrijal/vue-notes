@@ -13,32 +13,17 @@
           <form @submit.prevent="onSubmit">
             <div class="mb-2">
               <label for="title" class="form-label">Title</label>
-              <input
-                type="text"
-                class="form-control"
-                id="title"
-                placeholder="Enter Title"
-                v-model="note.title"
-              />
+              <input type="text" class="form-control" id="title" placeholder="Enter Title" v-model="note.title" />
             </div>
             <div class="mb-2">
               <label for="description" class="form-label">Description</label>
-              <textarea
-                class="form-control"
-                id="description"
-                rows="3"
-                v-model="note.description"
-              ></textarea>
+              <textarea class="form-control" id="description" rows="3" v-model="note.description"></textarea>
             </div>
             <div class="mb-2">
               <label for="title" class="form-label">Category id</label>
               <select v-model="note.categoryId" class="form-select">
                 <option value="" disabled>--Select Category--</option>
-                <option
-                  v-for="category in categories"
-                  :key="category.id"
-                  :value="category.id"
-                >
+                <option v-for="category in categories.data" :key="category.id" :value="category.id">
                   {{ category.title }}
                 </option>
               </select>
