@@ -1,95 +1,109 @@
 <template>
-  <div class="d-flex justify-content-center">
-    <table
-      class="table table-bordered table-striped m-5"
-      style="max-width: 800px"
-    >
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Description</th>
-          <th>Created On</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="category in categories" :key="category.id">
-          <td>{{ category.title }}</td>
-          <td>{{ category.description }}</td>
-          <td>{{ category.createdOn }}</td>
-          <td class="text-center">
-            <button class="btn btn-danger" @click="deleteItem(category.id)">
-              Delete
-            </button>
-            <button class="btn btn-primary mx-2" @click="editItem(category.id)">
-              Edit
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div v-if="loading">Loading...</div>
-    <div v-else-if="error">Error: {{ error }}</div>
-  </div>
-  <div class="d-flex justify-content-center">
-    <v-pagination
-      v-model="page"
-      :pages="pageSize"
-      :range-size="1"
-      active-color="#DCEDFF"
-      @update:modelValue="getCategories()"
-      class="my-3"
-    />
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-6">
+        <h2 class="text-uppercase">List Of Categories</h2>
+      </div>
+      <div class="col-6 text-end">
+        <button class="btn btn-dark" @click="addClicked">Add Category</button>
+      </div>
+      <hr />
+      <div class="card">
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Created On</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(category, index) in categories.data" :key="category.id">
+                <th scope="row">{{ index + 1 }}</th>
+                <td>{{ category.title }}</td>
+                <td>{{ category.description }}</td>
+                <td>{{ category.createdOn }}</td>
+                <td>
+                  <button class="btn btn-sm btn-primary" @click="onEdit(category.id)">
+                    Edit
+                  </button>
+                  |
+                  <button class="btn btn-sm btn-danger" @click="onDelete(category.id)">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <Pagination v-model="categories.page" :records="categories.totalCount" :per-page="categories.pageSize"
+            @paginate="myCallback" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
-
 <script setup>
-import useFetch from "./composables/useFetch";
-import { onMounted, ref, watch } from "vue";
-import router from "@/router";
-import VPagination from "@hennge/vue3-pagination";
-import "@hennge/vue3-pagination/dist/vue3-pagination.css";
+import { ref, onMounted } from "vue";
 import axios from "axios";
+import router from "@/router";
+import Pagination from "v-pagination-3";
+const categories = ref(
+  {
+    data: [],
+    page: 1,
+    pageSize: 2,
+    totalPages: 0,
+    totalCount: 0,
+  }
+);
 
-const baseUrl = "https://localhost:44385/api/Category/GetAll";
-const page = ref(1);
-const pageSize = ref(10);
-const categories = ref([]);
-
-const getCategories = () => {
-  const { data, error, loading } = useFetch(
-    `${baseUrl}?page=${page.value}&pageSize=${pageSize.value}`
-  );
-  // console.log(data.value.pageSize);
-  watch(
-    () => data.value,
-    (newValue) => {
-      if (newValue) {
-        categories.value = newValue.data;
-        // console.log(categories);
-      }
-    }
-  );
-  return { error, loading };
-};
-onMounted(() => {
-  getCategories();
-});
-
-const editItem = (id) => {
-  router.push({ path: `category/edit/${id}` });
+const myCallback = async (page) => {
+  categories.value.page = page;
+  await getCategories();
 };
 
-const deleteItem = (id) => {
+const getCategories = async () => {
   try {
-    const response = axios.delete(
-      `https://localhost:44385/api/Category/Delete?id=${id}`
+    const response = await axios.get(
+      `https://localhost:44385/api/Category/GetAll?page=${categories.value.page}&pageSize=${categories.value.pageSize}`
     );
-    if (response === 200) {
-      alert("Category deleted successfully");
+    if (response.status === 200) {
+      categories.value = response.data;
+    } else {
+      alert("Something went wrong");
     }
-  } catch (error) {
-    alert(error);
+  }
+  catch (err) {
+    alert(err.message);
   }
 };
+const addClicked = () => {
+  router.push({ path: "category/add" });
+};
+const onDelete = async (id) => {
+  try {
+    const response = await axios.delete(
+      `https://localhost:44385/api/Category/Delete?id=${id}`
+    );
+    if (response.status === 200) {
+      alert("Category Deleted");
+      await getCategories();
+    } else {
+      alert("Something went wrong");
+    }
+  } catch (err) {
+    alert(err.message);
+  }
+};
+
+
+const onEdit = (id) => {
+  router.push({ path: `category/edit/${id}` });
+};
+onMounted(async () => {
+  await getCategories();
+});
 </script>
