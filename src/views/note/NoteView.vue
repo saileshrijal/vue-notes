@@ -26,17 +26,11 @@
                   <td>{{ note.title }}</td>
                   <td>{{ note.description }}</td>
                   <td>
-                    <button
-                      class="btn btn-sm btn-primary"
-                      @click="onEdit(note.id)"
-                    >
+                    <button class="btn btn-sm btn-primary" @click="onEdit(note.id)">
                       Edit
                     </button>
                     |
-                    <button
-                      class="btn btn-sm btn-danger"
-                      @click="onDelete(note.id)"
-                    >
+                    <button class="btn btn-sm btn-danger" @click="onDelete(note.id)">
                       Delete
                     </button>
                   </td>
@@ -44,12 +38,8 @@
               </transition-group>
             </tbody>
           </table>
-          <Pagination
-            v-model="notes.page"
-            :records="notes.totalCount"
-            :per-page="notes.pageSize"
-            @paginate="myCallback"
-          />
+          <Pagination v-model="notes.page" :records="notes.totalCount" :per-page="notes.pageSize"
+            @paginate="myCallback" />
         </div>
       </div>
     </div>

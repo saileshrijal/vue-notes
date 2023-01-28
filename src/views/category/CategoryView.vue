@@ -1,13 +1,7 @@
 <template>
   <div class="container mt-4">
     <div class="row">
-      <div class="col-6">
-        <h2 class="text-uppercase">List Of Categories</h2>
-      </div>
-      <div class="col-6 text-end">
-        <button class="btn btn-dark" @click="addClicked">Add Category</button>
-      </div>
-      <hr />
+      <TopHeader :button-link="addClicked" button-text="Add Category" button-icon="fa fa-gear" />
       <div class="card">
         <div class="card-body">
           <table class="table table-striped">
@@ -52,6 +46,8 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import router from "@/router";
 import Pagination from "v-pagination-3";
+import TopHeader from "@/components/TopHeader.vue";
+
 const categories = ref({
   data: [],
   page: 1,
