@@ -13,32 +13,17 @@
           <form @submit.prevent="onSubmit">
             <div class="mb-2">
               <label for="title" class="form-label">Title</label>
-              <input
-                type="text"
-                class="form-control"
-                id="title"
-                placeholder="Enter Title"
-                v-model="note.title"
-              />
+              <input type="text" class="form-control" id="title" placeholder="Enter Title" v-model="note.title" />
             </div>
             <div class="mb-2">
               <label for="description" class="form-label">Description</label>
-              <textarea
-                class="form-control"
-                id="description"
-                rows="3"
-                v-model="note.description"
-              ></textarea>
+              <textarea class="form-control" id="description" rows="3" v-model="note.description"></textarea>
             </div>
             <div class="mb-2">
               <label for="categoryId" class="form-label">Category Id</label>
               <select v-model="note.categoryId" class="form-select">
                 <option value="" disabled>--Select Category--</option>
-                <option
-                  v-for="category in categories"
-                  :key="category.id"
-                  :value="category.id"
-                >
+                <option v-for="category in categories" :key="category.id" :value="category.id">
                   {{ category.title }}
                 </option>
               </select>
@@ -53,9 +38,9 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import axios from "axios";
 import router from "@/router";
 import swal from "sweetalert2";
+import axiosTokenInstance from "@/services/AxiosTokenInstance";
 const note = ref({
   id: "",
   title: "",
@@ -99,7 +84,7 @@ const validation = () => {
 
 const getNote = async () => {
   try {
-    const response = await axios.get(
+    const response = await axiosTokenInstance.get(
       `https://localhost:44385/api/Note/GetById?id=${id}`
     );
     if (response.status === 200) {
@@ -123,7 +108,7 @@ const getNote = async () => {
 
 const getCategories = async () => {
   try {
-    const response = await axios.get(
+    const response = await axiosTokenInstance.get(
       "https://localhost:44385/api/Category/GetAll"
     );
     if (response.status === 200) {
@@ -153,7 +138,7 @@ const editNote = async () => {
   try {
     /* eslint-disable */
     if (validation()) {
-      const response = await axios.put(
+      const response = await axiosTokenInstance.put(
         `https://localhost:44385/api/Note/Put?id=${note.value.id}`,
         note.value
       );

@@ -48,10 +48,10 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
 import router from "@/router";
 import swal from "sweetalert2";
 import Pagination from "v-pagination-3";
+import axiosTokenInstance from "@/services/AxiosTokenInstance";
 const notes = ref({
   data: [],
   page: 1,
@@ -67,7 +67,7 @@ const myCallback = async (page) => {
 
 const getNotes = async () => {
   try {
-    const response = await axios.get(
+    const response = await axiosTokenInstance.get(
       `https://localhost:44385/api/Note/GetAll?page=${notes.value.page}&pageSize=${notes.value.pageSize}`
     );
     if (response.status === 200) {
@@ -95,7 +95,7 @@ const addClicked = () => {
 
 const onDelete = async (id) => {
   try {
-    const response = await axios.delete(
+    const response = await axiosTokenInstance.delete(
       `https://localhost:44385/api/Note/Delete?id=${id}`
     );
     if (response.status === 200) {

@@ -1,9 +1,9 @@
 <template>
-    <div class="row">
+    <div class="row ">
         <div class="col-6">
             <h2 class="text-uppercase">{{ title }}</h2>
         </div>
-        <div class="col-6 text-end">
+        <div class="col-6 text-end container-fluid">
             <button class="btn btn-dark" @click="buttonLink">
                 <i :class="buttonIcon"></i> {{ buttonText }}
             </button>

@@ -23,10 +23,10 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import axios from "axios";
 import router from "@/router";
 import swal from "sweetalert2";
 import TopHeader from "@/components/TopHeader.vue"
+import axiosTokenInstance from "@/services/AxiosTokenInstance";
 
 const category = ref({
   id: "",
@@ -38,7 +38,7 @@ const id = router.currentRoute.value.params.id;
 
 const getCategory = async () => {
   try {
-    const response = await axios.get(
+    const response = await axiosTokenInstance.get(
       `https://localhost:44385/api/Category/Get?id=${id}`
     );
     if (response.status == 200) {
@@ -86,7 +86,7 @@ const validation = () => {
 const editCategory = async () => {
   try {
     if (validation()) {
-      const response = await axios.put(
+      const response = await axiosTokenInstance.put(
         `https://localhost:44385/api/Category/Put?id=${category.value.id}`,
         category.value
       );

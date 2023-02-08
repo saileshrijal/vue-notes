@@ -23,10 +23,10 @@
 
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
 import router from "@/router";
 import swal from "sweetalert2";
 import TopHeader from "@/components/TopHeader.vue"
+import axiosTokenInstance from "@/services/AxiosTokenInstance";
 
 const category = ref({
   title: "",
@@ -55,7 +55,7 @@ const validation = () => {
 
 const addCategory = async () => {
   try {
-    const response = await axios.post(
+    const response = await axiosTokenInstance.post(
       "https://localhost:44385/api/Category/Post",
       category.value
     );

@@ -22,10 +22,39 @@
                         <RouterLink to="/note" class="nav-link" href="#">Note</RouterLink>
                     </li>
                 </ul>
+                <!-- //if authenticated/logged in -->
+                <ul class="navbar-nav ml-auto mb-2 mb-lg-0" v-if="authStore.isAuthenticated">
+                    <li class="nav-item">
+                        <router-link to="/profile" class="nav-link">Hi! {{ authStore.user.firstName }}
+                            {{ authStore.user.lastName }}</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-secondary" @click="logOut">Log Out</button>
+                    </li>
+                </ul>
+                <!-- if not loggedin -->
+                <ul class="navbar-nav ml-auto mb-2 mb-lg-0" v-if="!authStore.isAuthenticated">
+                    <li class="nav-item">
+                        <router-link to="/login" class="nav-link">Login</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link to="/register" class="nav-link">Register</router-link>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 </template>
 
 <script setup>
+import router from '@/router';
+import { useAuthStore } from '@/stores/authStore';
+const authStore = useAuthStore();
+
+const logOut = () => {
+    localStorage.removeItem('token');
+    authStore.isAuthenticated = false;
+    authStore.user = {}
+    router.push('/')
+}
 </script>

@@ -38,9 +38,9 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
 import router from "@/router";
 import swal from "sweetalert2";
+import axiosTokenInstance from "@/services/AxiosTokenInstance";
 
 const note = ref({
   title: "",
@@ -85,7 +85,7 @@ onMounted(async () => {
 
 const getCategories = async () => {
   try {
-    const response = await axios.get(
+    const response = await axiosTokenInstance.get(
       "https://localhost:44385/api/Category/GetAll"
     );
     if (response.status === 200) {
@@ -101,7 +101,7 @@ const getCategories = async () => {
 const addNote = async () => {
   try {
     if (validation()) {
-      const response = await axios.post(
+      const response = await axiosTokenInstance.post(
         "https://localhost:44385/api/Note/Post",
         note.value
       );
